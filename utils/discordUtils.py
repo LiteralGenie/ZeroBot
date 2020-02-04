@@ -7,6 +7,8 @@ class Client(discord.Client):
 
     async def on_ready(self):
         print('Logged in as', self.user.name, self.user.id)
+        act= discord.Activity(name=f"{self.prefix}help for commands", type=discord.ActivityType.playing)
+        await self.change_presence(activity=act)
 
     async def on_message(self, message):
         if message.author.id == self.user.id: return
@@ -30,12 +32,8 @@ cmdList= {
         "args": ""
     },
     "setdelay": {
-        "desc": "Sets how often the bot checks for updates (seconds)",
+        "desc": "Interval between updates (seconds)",
         "args": "`(integer)`"
-    },
-    "help": {
-        "desc": "Display command list",
-        "args": ""
     },
     "addchannel": {
         "desc": "Adds update channel",
@@ -52,7 +50,11 @@ cmdList= {
     "removeuser": {
         "desc": "Remove bot permissions from user",
         "args": "`(user_id)`"
-    }
+    },
+    "help": {
+        "desc": "Display command list",
+        "args": ""
+    },
 }
 
 def getUseString(cmd, client):
@@ -106,7 +108,7 @@ async def setDelay(message, client):
     config["UPDATE_DELAY"]= val
     utils.dumpJson(config, globals.CONFIG_FILE)
 
-    await message.channel.send(f"Updates will be checked every {val} seconds (from {oldDelay}).")
+    await message.channel.send(f"Updates will be checked every `{val}` seconds (from `{oldDelay}`).")
 
 async def modChannel(message, client, typ):
     split= message.content.split()
