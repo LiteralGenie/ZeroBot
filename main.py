@@ -2,12 +2,15 @@ from utils import discordUtils, utils, updateUtils, globals
 import os, asyncio
 
 # SETUP ----------------------
-CONFIG= utils.loadJson(globals.CONFIG_FILE)
-CACHE= utils.loadJson(globals.CACHE_FILE, default= {"seen": []})
-MENTIONS= utils.loadJson(globals.MENTION_FILE)
-
 client= None
 
+def reload():
+    global CONFIG, CACHE, MENTIONS
+    CONFIG= utils.loadJson(globals.CONFIG_FILE)
+    CACHE= utils.loadJson(globals.CACHE_FILE, default= {"seen": []})
+    MENTIONS= utils.loadJson(globals.MENTION_FILE)
+reload()
+    
 
 # ASYNC FUNCTIONS ------------------
 async def updateHandler(update):
@@ -21,6 +24,7 @@ async def updateHandler(update):
 
 async def checkUpdates():
     while True:
+        reload()
         await updateUtils.handleUpdates(handler=updateHandler, cache=CACHE, cacheFile=globals.CACHE_FILE, delay=CONFIG['DISCORD_DELAY'])
         await asyncio.sleep(CONFIG['UPDATE_DELAY'])
 
