@@ -1,5 +1,7 @@
 ## Description
-Discord bot to display updates from https://zeroscans.com/latest .
+Discord bot to display updates from https://zeroscans.com/latest. Contact `Literal Genie#2222` for concerns or whatever.
+
+![Preview](https://i.imgur.com/mh2Uic2.png)
 
 ## Setup 
 1. Clone repo and install the listed modules in `requirements.txt`.
