@@ -1,0 +1,13 @@
+{
+  "DISCORD_KEY": "buy me idnner first",
+  "UPDATE_DELAY": 3,
+  "DISCORD_DELAY": 5,
+  "UPDATE_LINK": "https://zeroscans.com/latest",
+  "UPDATE_CHANNELS": [
+    "584871596586565645"
+  ],
+  "ADMINS": [
+    "113843036965830657",
+    "260788818167201793"
+  ]
+}
