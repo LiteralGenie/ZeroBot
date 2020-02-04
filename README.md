@@ -15,3 +15,4 @@ Discord bot to display updates from https://zeroscans.com/latest with series-spe
   - Pretty embeds
 - Less bootleg way to pull updates
   - Generalizable with rss?
+- Warning channel
