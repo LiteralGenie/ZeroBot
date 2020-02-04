@@ -2,7 +2,7 @@ from utils import utils, globals
 import discord, json, copy
 
 class Client(discord.Client):
-    def load(self, prefix="!"):
+    def load(self, prefix="$"):
         self.prefix= prefix
 
     async def on_ready(self):
@@ -24,12 +24,19 @@ class Client(discord.Client):
         elif m.startswith("removec"): await modChannel(*args, typ="remove")
         elif m.startswith("addu"): await modUser(*args, typ="add")
         elif m.startswith("removeu"): await modUser(*args, typ="remove")
+        elif m.startswith("addr"): await modMention(*args, typ="add")
+        elif m.startswith("remover"): await modMention(*args, typ="remove")
+        elif m.startswith("ser"): await listSeries(*args)
 
 
 cmdList= {
     "settings": {
         "desc": "Display bot settings",
         "args": ""
+    },
+    "series": {
+      "desc": "Lists series + ids",
+      "args": ""
     },
     "setdelay": {
         "desc": "Interval between updates (seconds)",
@@ -50,6 +57,14 @@ cmdList= {
     "removeuser": {
         "desc": "Remove bot permissions from user",
         "args": "`(user_id)`"
+    },
+    "addrole": {
+        "desc": "Add role mention for a specific series",
+        "args": "`(series_id)` `(role_id)`"
+    },
+    "removerole": {
+        "desc": "Remove role mention for a specific series",
+        "args": "`(series_id)` `(role_id)`"
     },
     "help": {
         "desc": "Display command list",
@@ -76,6 +91,7 @@ async def checkMinArgs(message, numArgs, correctUsageString):
     return False
 
 async def checkInt(message, val, correctUsageString):
+    print(val)
     try:
         x= int(val)
         return x
@@ -90,6 +106,7 @@ async def help(message, client):
         t= getUseString(cmd, client)
         t+= " - " + cmdList[cmd]['desc']
         text+= t + "\n"
+    text+= "\nContact Literal Genie#2222 for issues."
 
     await message.channel.send(text)
 
@@ -112,7 +129,7 @@ async def setDelay(message, client):
 
 async def modChannel(message, client, typ):
     split= message.content.split()
-    correctUsageString= getUseString("setdelay", client)
+    correctUsageString= getUseString(typ + "channel", client)
 
     if await checkMinArgs(message, 1, correctUsageString): return
 
@@ -138,7 +155,7 @@ async def modChannel(message, client, typ):
 
 async def modUser(message, client, typ):
     split= message.content.split()
-    correctUsageString= getUseString("setdelay", client)
+    correctUsageString= getUseString(typ + "user", client)
 
     if await checkMinArgs(message, 1, correctUsageString): return
     val= await checkInt(message, split[1], correctUsageString)
@@ -166,6 +183,46 @@ async def modUser(message, client, typ):
 
     utils.dumpJson(config, globals.CONFIG_FILE)
 
+async def modMention(message, client, typ):
+    split= message.content.split()
+    correctUsageString= getUseString(typ + "role", client)
+
+    if await checkMinArgs(message, 2, correctUsageString): return
+
+    sid= await checkInt(message, split[1], correctUsageString)
+    if sid is False: return
+
+    rid= await checkInt(message, split[2], correctUsageString)
+    if rid is False: return
+
+    role= message.guild.get_role(rid)
+    if not role: return await sendError(message, f"{split[1]} is not a valid role id.", correctUsageString)
+
+    mentions= utils.loadJson(globals.MENTION_FILE)
+
+    sData= utils.loadJson(globals.SERIES_FILE)
+    sName= str(sid)
+    if str(sid) in sData: sName= f"{sData[str(sid)]['title']} ({sName})"
+
+    if typ == "add":
+        if str(sid) not in mentions: mentions[str(sid)]= []
+        if str(rid) in mentions[str(sid)]: return await message.channel.send(f"Error. `{role.name} ({rid})` is already a mentioned role for series `{sName}`.")
+        mentions[str(sid)].append(str(rid))
+    elif typ == "remove":
+        if str(rid) not in mentions: return await message.channel.send(f"Error. `{role.name} ({rid})` is not a mentioned role for series `{sName}`.")
+        mentions[str(sid)]= [x for x in mentions[str(sid)] if str(x) != str(rid)]
+
+    lst= []
+    for x in mentions[str(sid)]:
+        role= message.guild.get_role(int(rid))
+        if role: name= role.name
+        else: name= "unknown"
+
+        lst.append(f"`{name} ({x})`")
+    await message.channel.send(f"Pinged roles for **`{sName}`**: " + ", ".join(lst))
+
+    utils.dumpJson(mentions, globals.MENTION_FILE)
+
 async def settings(message, client):
     config= utils.loadJson(globals.CONFIG_FILE)
     config['mentions']= utils.loadJson(globals.MENTION_FILE)
@@ -176,6 +233,7 @@ async def settings(message, client):
     cpy= []
     for chid in config['UPDATE_CHANNELS']:
         uCh= client.get_channel(int(chid))
+        if int(uCh.guild.id) != int(message.guild.id): continue
         cpy.append(f"{uCh.name} ({uCh.id})")
     config['UPDATE_CHANNELS']= cpy
 
@@ -184,17 +242,30 @@ async def settings(message, client):
     sData= utils.loadJson(path=globals.SERIES_FILE)
     cpy= copy.deepcopy(config['mentions'])
     for sid in cpy:
-        mid= int(cpy[sid])
-        name= message.guild.get_role(mid).name
+        for mid in cpy[sid]:
+            mid= int(mid)
+            role= message.guild.get_role(mid)
+            if role: name= role.name
+            else:
+                config['mentions'][sid].remove(str(mid))
+                if not config['mentions'][sid]: del config['mentions'][sid]
+                continue
+                name= "unknown"
 
-        if sid not in sData and sid != "-1": print("WARNING:", sid, "is an unknown series.")
+            if str(sid) not in sData and str(sid) != "-1":
+                stitle= "unknown"
+                print("WARNING:", sid, "is an unknown series.")
+            elif str(sid) != "-1":
+                stitle= sData[str(sid)]['title']
 
-        if sid != "-1": key= f"{sData[sid]} ({sid})"
-        else: key= "ALL"
-        val= f"{name} ({mid})"
+            if sid != "-1": key= f"{stitle} ({sid})"
+            else: key= "ALL (-1)"
+            val= f"{name} ({mid})"
 
-        config['mentions'][key]= val
-        del config['mentions'][sid]
+            if key not in config['mentions']:
+                config['mentions'][key]= []
+                del config['mentions'][sid]
+            config['mentions'][key].append(val)
 
     # Make admins readable
     users= []
@@ -209,3 +280,15 @@ async def settings(message, client):
     config['ADMINS']= users
 
     await message.channel.send(f"```yaml\n{json.dumps(config, indent=2)}```")
+
+async def listSeries(message, client):
+    sData= utils.loadJson(globals.SERIES_FILE)
+    lst= []
+
+    for sid in sData:
+        lst+= [f"[{utils.zeroPad(sid)}] {sData[sid]['title']}"]
+
+    join= '\n'.join(lst)
+    text= f"```css\n{join}\n```"
+    await message.channel.send(text)
+

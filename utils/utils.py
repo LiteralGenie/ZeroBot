@@ -16,3 +16,12 @@ def loadJson(path, default=None):
 def dumpJson(dct, path):
     with open(path, "w+") as file:
         json.dump(dct, file, indent=2)
+
+def zeroPad(x, numDec=7):
+    sx= str(x)
+    ix= int(x)
+
+    padSize= numDec-len(x)
+    x= "".join(["0"]*padSize) + x
+
+    return x

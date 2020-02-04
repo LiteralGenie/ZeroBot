@@ -39,7 +39,7 @@ def getUpdates(l="https://zeroscans.com/latest"):
     for dv in divs:
         updateList.append(parseUpdateDiv(dv))
 
-    return updateList
+    return list(reversed(updateList))
 
 async def handleUpdates(handler, cache, cacheFile, delay=1):
     updateList= getUpdates()
@@ -52,14 +52,14 @@ async def handleUpdates(handler, cache, cacheFile, delay=1):
 
             cache['seen'].append(id)
             utils.dumpJson(cache, cacheFile)
-        await asyncio.sleep(delay)
+            await asyncio.sleep(delay)
 
 def getUpdateMessage(update, mentionDict):
     message= ""
     sid= update['sId']
 
-    mentions= [mentionDict['-1']]
-    if sid in mentionDict: mentions+= [mentionDict[sid]]
+    mentions= copy.deepcopy([mentionDict['-1']])
+    if sid in mentionDict: mentions+= [copy.deepcopy(mentionDict[sid])]
     else: print("WARNING:", update['sName'], update['sId'], "does not have a mention role.")
 
     message= f"<@&{'> <@&'.join(mentions)}> **{update['sName']}** **{update['chNum']}** {update['chLink']}"
@@ -79,27 +79,28 @@ def getUpdateEmbed(update, mentionDict):
             { "name": "Links",
             "value": "",
             "inline": True, },
-            { "name": "Mentions",
-            "value": "",
-            "inline": True, },
+            # { "name": "Mentions",
+            # "value": "",
+            # "inline": True, },
         ]
     }
     sid= update['sId']
     sData= getSeriesData(sid)
 
-    mentions= [mentionDict['-1']]
-    if sid in mentionDict: mentions+= [mentionDict[sid]]
+    mentions= copy.deepcopy(mentionDict['-1'])
+    if str(sid) in mentionDict:
+        mentions+= copy.deepcopy(mentionDict[str(sid)])
     else: print("WARNING:", update['sName'], update['sId'], "does not have a mention role.")
-    mentionString= f"<@&{'> <@&'.join(mentions)}>"
+    # mentionString= f"<@&{'> <@&'.join(mentions)}>"
 
-    template['title']= f"{update['sName']} - Chapter {update['chNum']}"
+    template['title']= f"{update['sName']} - Chapter {update['chId']}"
     template['url']= update['chLink']
     template['description']= sData['description']
     template['thumbnail']['url']= sData['cover']
     template['fields'][0]['value']= f"[[Chapter]]({update['chLink']}) • [[Series]]({update['sLink']})"
-    template['fields'][1]['value']= mentionString
+    # template['fields'][1]['value']= mentionString
 
-    return template
+    return template, mentions
 
 def updateSeriesData(update):
     sid= update['sId']
