@@ -1,7 +1,7 @@
 ## Description
 Discord bot to display updates from https://zeroscans.com/latest with series-specific pings. Contact `Literal Genie#2222` for concerns or whatever.
 
-![Preview](https://i.imgur.com/0wNj0q5.png)
+![Preview](https://i.imgur.com/WfPHj8J.png)
 
 ## Setup 
 1. Clone repo and install the listed modules in `requirements.txt`.
