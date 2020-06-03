@@ -25,3 +25,51 @@ def zeroPad(x, numDec=7):
     x= "".join(["0"]*padSize) + x
 
     return x
+
+def pprint(lst, div="|", spc=1, headers=None, quoteWrap=False, links=None):
+    num = len(lst[0])
+    widths = [0] * (num)
+
+    for i in range(num):
+        widths[i] = max([len(str(x[i])) for x in lst])
+        if headers: widths[i]= max(widths[i], len(headers[i]))
+
+        widths[i]= widths[i] + 1 + spc
+
+    htext = ""
+    if headers:
+        line= ""
+        for j in range(len(headers)):
+            padding= widths[j]-len(headers[j])
+
+            line+= headers[j] + " ".join([""]*padding) + div + " "
+        if quoteWrap: htext+= f"`{line}`\n"
+        else: htext+= f"{line}\n"
+
+    text = ""
+    for i in range(len(lst)):
+        line= ""
+        for j in range(num):
+            if lst[i][j] is None: lst[i][j]= ""
+            padding= widths[j]-len(lst[i][j])
+
+            line+= lst[i][j] + " ".join([""]*padding) + div + " "
+
+        if quoteWrap: text+= f"`{line}`\n"
+        else: text+= f"{line}\n"
+
+    text= text[:-1]
+
+    m= max([len(x) for x in text.split("\n")])
+    if quoteWrap: m=m-2
+
+    div= "".join(["-"]*m)
+    if quoteWrap: div= f"`{div}`\n"
+    else: div+= "\n"
+
+    if quoteWrap and links:
+        split= text.split("\n")
+        split= [split[i] + links[i] for i in range(len(split))]
+        text= "\n".join(split)
+
+    return htext + div + text
