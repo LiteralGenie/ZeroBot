@@ -1,6 +1,5 @@
 {
   "seen": [
-    "142|636122",
     "143|636122",
     "59|729525",
     "60|729525",
@@ -15,45 +14,45 @@
     "14|672895",
     "47|188504",
     "10|790069",
-    "144|636122",
-    "145|636122",
-    "41|853428",
-    "42|853428",
     "43|853428",
     "44|853428",
     "45|853428",
     "33|218669",
-    "34|218669",
-    "11|790069"
+    "11|790069",
+    "144|636122",
+    "145|636122",
+    "41|853428",
+    "42|853428",
+    "34|218669"
   ],
   "last_sent": {
     "ids": {
-      "584871596586565645": "674353784129978400",
-      "419219552162021376": "674353784868306945"
+      "584871596586565645": "674408313420644363",
+      "419219552162021376": "674408315035582484"
     },
     "update_content": {
       "584871596586565645": {
-        "chLink": "https://zeroscans.com/comics/790069-askr-yggdrasils-wood/1/11",
-        "chNum": "Vol. 1 Ch. 11",
-        "chId": "11",
-        "sLink": "https://zeroscans.com/comics/790069-askr-yggdrasils-wood",
-        "sName": "Askr Yggdrasil's Wood",
-        "sId": "790069",
-        "cover": "https://zeroscans.com//storage/comics/6EA62A43445024C65D39D3B58EA198D1A889B5D87AB3DF60/k2HY7MNZuqsByjvsStCwrYW3SgoAHHFYcRpJcagx.jpeg"
+        "chLink": "https://zeroscans.com/comics/218669-knuckle-girl/1/34",
+        "chNum": "Vol. 1 Ch. 34",
+        "chId": "34",
+        "sLink": "https://zeroscans.com/comics/218669-knuckle-girl",
+        "sName": "Knuckle Girl",
+        "sId": "218669",
+        "cover": "https://zeroscans.com//storage/comics/C9D891DF1EC31BE83CB461C739BD9AD8767053CF8F07A678/m6tqvpixfcn1JayatyC9HauSQzIpsp8l0v4BacpA.png"
       },
       "419219552162021376": {
-        "chLink": "https://zeroscans.com/comics/790069-askr-yggdrasils-wood/1/11",
-        "chNum": "Vol. 1 Ch. 11",
-        "chId": "11",
-        "sLink": "https://zeroscans.com/comics/790069-askr-yggdrasils-wood",
-        "sName": "Askr Yggdrasil's Wood",
-        "sId": "790069",
-        "cover": "https://zeroscans.com//storage/comics/6EA62A43445024C65D39D3B58EA198D1A889B5D87AB3DF60/k2HY7MNZuqsByjvsStCwrYW3SgoAHHFYcRpJcagx.jpeg"
+        "chLink": "https://zeroscans.com/comics/218669-knuckle-girl/1/34",
+        "chNum": "Vol. 1 Ch. 34",
+        "chId": "34",
+        "sLink": "https://zeroscans.com/comics/218669-knuckle-girl",
+        "sName": "Knuckle Girl",
+        "sId": "218669",
+        "cover": "https://zeroscans.com//storage/comics/C9D891DF1EC31BE83CB461C739BD9AD8767053CF8F07A678/m6tqvpixfcn1JayatyC9HauSQzIpsp8l0v4BacpA.png"
       }
     },
     "time": {
-      "584871596586565645": 1580848871.1094372,
-      "419219552162021376": 1580848871.2232814
+      "584871596586565645": 1580861871.951784,
+      "419219552162021376": 1580861872.358568
     }
   }
 }

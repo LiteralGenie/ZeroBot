@@ -1,0 +1,58 @@
+{
+  "parsed": [
+    {
+      "content": "<@&4260226696970600449> Submission of work assigned sent here stating the following:\n`[Project Name] Chapter [Number] [Job] [Next Person]`\ne.g.: **Star Martial God Technique Chapter 129 Cleaning <@218727338702143498>**\n\nuse the full name of the project and job\nso its easier to find via the discord search bar\nif you finish TS then tag <@&425432345257050124> \n\n- no links\n- no uploads\n- no chatting\nAND NO FREAKING **Done**\nif its in this channel then ofc its done <:KittyAngry:425563312562896897>",
+      "author": {
+        "name": "asch.99",
+        "id": 218727338702143498
+      },
+      "time": "20180322 - 11:31",
+      "epoch": 1521732686.155,
+      "url": "https://discordapp.com/channels/4254239107591700439/425992635086405632/426342135491461131",
+      "id": 4263421354913461131,
+      "parsed": {
+        "title": "e.g.: Star Martial God Tenique",
+        "chapters": [
+          129.0
+        ],
+        "type": "Cleaning (CL)"
+      }
+    },
+    {
+      "content": "Dragon King of the World Chapter 17 Typesetting <@&425432345257050124>",
+      "author": {
+        "name": "Morpheus",
+        "id": 2817603444714641408
+      },
+      "time": "20180403 - 22:12",
+      "epoch": 1522807950.483,
+      "url": "https://discordapp.com/channels/4254239107591270049/425992635086405632/430852120963448843",
+      "id": 4308521209363448843,
+      "parsed": {
+        "title": "Dragon King of the World",
+        "chapters": [
+          17.0
+        ],
+        "type": "Typesetting (TS)"
+      }
+    },
+    {
+      "content": "Knuckle Girl Chapter 30 Typesetting  \n<@1641420826484539393>",
+      "author": {
+        "name": "\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640\u0640",
+        "id": 5325696447652798464
+      },
+      "time": "20200105 - 01:53",
+      "epoch": 1578207234.276,
+      "url": "https://discordapp.com/channels/4254234910759170049/425992635086405632/6163198459079426062",
+      "id": 6631984539079426062,
+      "failed": [
+        "<@164140826484539393>"
+      ]
+    }
+  ],
+  "members": {
+    "2187273438702143498": "asch.99",
+    "2817630344714641408": "Morpheus",
+  }
+}

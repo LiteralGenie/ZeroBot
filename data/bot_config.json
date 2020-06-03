@@ -1,0 +1,18 @@
+{
+  "PREFIX": "$",
+  "DISCORD_KEY": "",
+  "GOOGLE_KEY": "",
+  "SHEET_ID": "",
+  "UPDATE_DELAY": 60,
+  "DISCORD_DELAY": 5,
+  "SIMUL_UPDATE_INTERVAL": 600,
+  "UPDATE_LINK": "https://zeroscans.com/latest",
+  "UPDATE_CHANNELS": [
+    "419219552162021376"
+  ],
+  "ADMINS": [
+    "113843036965830657",
+    "260788818167201793",
+    "218727338702143498"
+  ]
+}
