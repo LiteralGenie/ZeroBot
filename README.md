@@ -7,7 +7,7 @@ Discord bot to display updates from https://zeroscans.com/latest with series-spe
 
 Secondary functions include tracking scanlation progress of staff via Discord messages. 
 
-Messages must be within a specified channel and of the format `[Project Name] Chapter [Number] [Job] [Next Person]`, where `Number` may be a range or comma delimited list.
+Messages must be within a specified channel and of the format `[Project Name] Chapter [Number] [Job] [optional: Next Person]`, where `Number` may be a range or comma delimited list.
 
 A short summary per user can also be displayed on Discord for bragging purposes.
 
