@@ -108,7 +108,7 @@ async def updateSheet(client, message):
         sheet.make()
         #     print("Done")
 
-        # await message.channel.send("Done: <https://docs.google.com/spreadsheets/d/11p8JYPtECToXRdEVcAMCsq1_S3sTVQf0HqtHiUsICVs/edit#gid=0>")
+        # await message.channel.send("Done: <https://docs.google.com/spreadsheets/d/blah>")
         await message.channel.send("Done")
     except Exception as e:
         traceback.print_exc()
