@@ -1,5 +1,5 @@
 from utils import utils, globals
-import requests, re, asyncio, json, copy
+import requests, re, asyncio, json, copy, time
 
 from bs4 import BeautifulSoup as bs
 
@@ -20,7 +20,7 @@ def parseUpdateDiv(dv):
 
     ret['chLink']= linkDiv.find("a")['href'].strip()
     ret['chNum']= linkDiv.find("span", class_="badge badge-md text-uppercase bg-darker-overlay").text.strip()
-    ret['chId']= re.search(r"(\d+)/(\d+)[/|$]*", ret['chLink']).group(2)
+    ret['chId']= re.search(r"/(\d+)/(\d+)[/|$]*", ret['chLink']).group(2)
     ret['cover']= "https://zeroscans.com/" + re.search(r"(/storage/.+)\);", linkDiv.find("a")['style']).group(1)
 
     ret['sLink']= infoDiv.find("a")['href'].strip()
@@ -41,18 +41,24 @@ def getUpdates(l="https://zeroscans.com/latest"):
 
     return list(reversed(updateList))
 
-async def handleUpdates(handler, cache, cacheFile, delay=1):
+lastDelay= time.time()
+async def handleUpdates(handler, cache, cacheFile):
     updateList= getUpdates()
     for update in updateList:
         id= update['chId'] + "|" + update['sId']
         if id not in cache['seen']:
             print("Updating", update)
+
+            #global lastDelay
+            #if time.time() - lastDelay > delay:
+            #    print("Sleeping", delay)
+            #    lastDelay= time.time()
+
             updateSeriesData(update)
             await handler(update)
 
             cache['seen'].append(id)
             utils.dumpJson(cache, cacheFile)
-            await asyncio.sleep(delay)
 
 def getUpdateMessage(update, mentionDict):
     message= ""
@@ -87,6 +93,8 @@ def getUpdateEmbed(update, mentionDict):
     sid= update['sId']
     sData= getSeriesData(sid)
 
+    utm= r"?utm_source=discord&utm_medium=discord&utm_campaign=discord"
+
     mentions= copy.deepcopy(mentionDict['-1'])
     if str(sid) in mentionDict:
         mentions+= copy.deepcopy(mentionDict[str(sid)])
@@ -94,10 +102,10 @@ def getUpdateEmbed(update, mentionDict):
     # mentionString= f"<@&{'> <@&'.join(mentions)}>"
 
     template['title']= f"{update['sName']} - Chapter {update['chId']}"
-    template['url']= update['chLink']
+    template['url']= update['chLink'] + utm
     template['description']= sData['description']
     template['thumbnail']['url']= sData['cover']
-    template['fields'][0]['value']= f"[[Chapter]]({update['chLink']}) • [[Series]]({update['sLink']})"
+    template['fields'][0]['value']= f"[[Chapter]]({update['chLink'] + utm}) • [[Series]]({update['sLink'] + utm})"
     # template['fields'][1]['value']= mentionString
 
     return template, mentions

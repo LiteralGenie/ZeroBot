@@ -1,5 +1,5 @@
-from utils import utils
-import copy
+from utils import utils, globals, statUtils
+import copy, json
 
 cmdList= {
     "settings": {
@@ -12,6 +12,10 @@ cmdList= {
     },
     "setdelay": {
         "desc": "Interval between updates (seconds)",
+        "args": "`(integer)`"
+    },
+    "setdiscorddelay": {
+        "desc": "Delay before update is published (seconds)",
         "args": "`(integer)`"
     },
     "addchannel": {
@@ -42,10 +46,27 @@ cmdList= {
         "desc": "Display command list",
         "args": ""
     },
+    "listroles": {
+        "desc": "List role ids",
+        "args": ""
+    }
 }
+
+async def listRoles(message, client):
+    roles= await client.get_guild(401178214258704384).fetch_roles()
+    ret= ""
+    for r in roles:
+        ret+= f"{r.name.ljust(15)} {r.id}\n"
+
+    while len(ret) > 1600:
+        await message.channel.send(f"```py\n{ret[:1600]}```")
+        ret= ret[1600:]
+    if ret: await message.channel.send(f"```py\n{ret[:1600]}```")
 
 def getUseString(cmd, client):
     t= f"`{client.prefix}{cmd}`"
+    print(cmd)
+    print(cmdList[cmd])
     if cmdList[cmd]["args"]: t+= " " + cmdList[cmd]["args"]
     return t
 
@@ -99,6 +120,23 @@ async def setDelay(message, client):
     utils.dumpJson(config, globals.CONFIG_FILE)
 
     await message.channel.send(f"Updates will be checked every `{val}` seconds (from `{oldDelay}`).")
+	
+async def setDiscordDelay(message, client):
+    split= message.content.split()
+    correctUsageString= getUseString("setdelay", client)
+
+    if await checkMinArgs(message, 1, correctUsageString): return
+
+    val= await checkInt(message, split[1], correctUsageString)
+    if val is False: return
+    if val < 0: return await sendError(message, "Delay interval must be positive", correctUsageString)
+
+    config= utils.loadJson(globals.CONFIG_FILE)
+    oldDelay= config["DISCORD_DELAY"]
+    config["DISCORD_DELAY"]= val
+    utils.dumpJson(config, globals.CONFIG_FILE)
+
+    await message.channel.send(f"Updates are delayed `{val}` seconds (from `{oldDelay}`).")
 
 async def modChannel(message, client, typ):
     split= message.content.split()
@@ -168,8 +206,8 @@ async def modMention(message, client, typ):
     rid= await checkInt(message, split[2], correctUsageString)
     if rid is False: return
 
-    role= message.guild.get_role(rid)
-    if not role: return await sendError(message, f"{split[1]} is not a valid role id.", correctUsageString)
+    role= message.guild.get_role(int(rid))
+    if not role: return await sendError(message, f"{split[2]} is not a valid role id.", correctUsageString)
 
     mentions= utils.loadJson(globals.MENTION_FILE)
 
@@ -182,7 +220,7 @@ async def modMention(message, client, typ):
         if str(rid) in mentions[str(sid)]: return await message.channel.send(f"Error. `{role.name} ({rid})` is already a mentioned role for series `{sName}`.")
         mentions[str(sid)].append(str(rid))
     elif typ == "remove":
-        if str(rid) not in mentions: return await message.channel.send(f"Error. `{role.name} ({rid})` is not a mentioned role for series `{sName}`.")
+        if str(rid) not in mentions[str(sid)]: return await message.channel.send(f"Error. `{role.name} ({rid})` is not a mentioned role for series `{sName}`.")
         mentions[str(sid)]= [x for x in mentions[str(sid)] if str(x) != str(rid)]
 
     lst= []
@@ -208,8 +246,8 @@ async def settings(message, client):
     cpy= []
     for chid in config['UPDATE_CHANNELS']:
         uCh= client.get_channel(int(chid))
-        if int(uCh.guild.id) != int(message.guild.id): continue
-        cpy.append(f"{uCh.name} ({uCh.id})")
+        if int(uCh.guild.id) != int(message.guild.id): cpy.append(uCh.id)
+        else: cpy.append(f"{uCh.name} ({uCh.id})")
     config['UPDATE_CHANNELS']= cpy
 
 
@@ -254,8 +292,11 @@ async def settings(message, client):
         val= f"{name} ({uid})"
         users.append(val)
     config['ADMINS']= users
+	
+    text= utils.breakMessage(json.dumps(config, indent=2), codeblock=True)
 
-    await message.channel.send(f"```yaml\n{json.dumps(config, indent=2)}```")
+    for t in text:
+        await message.channel.send(t)
 
 async def listSeries(message, client):
     sData= utils.loadJson(globals.SERIES_FILE)
@@ -267,3 +308,63 @@ async def listSeries(message, client):
     join= '\n'.join(lst)
     text= f"```css\n{join}\n```"
     await message.channel.send(text)
+
+async def stats(message, client):
+    split= message.content.split(maxsplit=1)
+
+    data= utils.loadJson(globals.PARSED_FILE)
+    tallies = statUtils.getTallies(data)
+
+    if len(split) == 1:
+        gStats= statUtils.getGlobalStats(tallies, data, num=3)
+
+        h1 = ['Type', '30 Days', 'All-time']
+        h2 = ['Type', 'Users (30 days)', 'Users (all)']
+        p1= utils.pprint(gStats['all'], headers=h1)
+        p2= utils.pprint(gStats['users'], headers=h2)
+
+        p1= "\n".join(p1.split("\n")[:-1]) + "\n" + "".join(["-"]*len(p1.split("\n")[0])) + "\n" + p1.split("\n")[-1]
+
+        title= "@ All Users"
+        s= f"""```py\n\n{title}\n\n{p1}\n\n{p2}\n```"""
+        s= utils.breakMessage(s, codeblock=True, lang="py")
+
+        for m in s:
+            await message.channel.send(m)
+        return
+    else:
+        spl= split[1].split()
+        catStats= statUtils.getCatStats(tallies)
+
+        username= None
+        for x in data['members']:
+            if all([y.lower() in data['members'][x].lower() for y in spl]):
+                username= data['members'][x]
+                break
+
+        if not username: return await message.channel.send(f"Error. `{split[1]}` is not a known user.")
+
+        uStats= statUtils.getUserStats(username, data, tallies)
+        for x in uStats['stats']:
+            cat= x[0].lower()
+            rankRecent= 1+catStats[cat]['recent'].index(int(x[1]))
+            rankAll= 1+catStats[cat]['all'].index(int(x[2]))
+            x[1]= f"{x[1].ljust(3)}" + f"(rank-{rankRecent})".rjust(10)
+            x[2]= f"{x[2].ljust(3)}" + f"(rank-{rankAll})".rjust(10)
+
+        h1= ['Type'.ljust(7), '30 Days', 'All-time']
+        h2= ['Type'.ljust(7), 'Days Ago', 'Chap', 'Series']
+
+        p1 = utils.pprint(uStats['stats'], headers=h1)
+        p1= "\n".join(p1.split("\n")[:-1]) + "\n" + "".join(["-"]*len(p1.split("\n")[0])) + "\n" + p1.split("\n")[-1]
+
+        if uStats['recent']: p2= "\n\n"+utils.pprint(uStats['recent'], headers=h2)
+        else: p2= ""
+
+        title= f"@ {username}"
+        s= f"""```py\n{title}\n\n{p1}{p2}\n```"""
+        s= utils.breakMessage(s, codeblock=True, lang="py")
+
+        for msg in s:
+            await message.channel.send(msg)
+        return

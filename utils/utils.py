@@ -73,3 +73,28 @@ def pprint(lst, div="|", spc=1, headers=None, quoteWrap=False, links=None):
         text= "\n".join(split)
 
     return htext + div + text
+
+def breakMessage(msg, codeblock=True, lang="", maxLen=1700):
+    text= []
+
+    if codeblock: msg= msg.replace("```" + lang,"").replace("```","")
+
+    splt = msg.split("\n")
+    txt= ""
+    while len("\n".join(splt)) > 1700:
+        if codeblock: txt= "```" + lang + "\n"
+        else: txt= ""
+
+        while len(txt) < 1700:
+            txt+= splt[0] + "\n"
+            splt= splt[1:]
+
+        if codeblock: txt+= "```"
+        else: txt+= ""
+
+        if len(txt) > 3: text.append(txt)
+
+    if codeblock: text.append("```" + lang + "\n" + "\n".join(splt) + "```")
+    else: text.append("\n".join(splt))
+
+    return text
