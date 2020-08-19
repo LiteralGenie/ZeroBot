@@ -48,6 +48,7 @@ Create a `./data/bot_config.json` file that looks like this:
   "DISCORD_DELAY": 300,
   "SIMUL_UPDATE_INTERVAL": 3600,
   "UPDATE_LINK": "https://zeroscans.com/latest",
+  "SUBMISSION_CHANNEL": "425992635086405632",
   "UPDATE_CHANNELS": [
     "401180166132334593"
   ],
@@ -68,3 +69,4 @@ Where:
    - `DISCORD_DELAY` is the interval between when an update is found and when it is posted on Discord.
    - `SIMUL_UPDATE_INTERVAL` is the interval for which updates for a single series are merged into a single Discord message (from first update).
    - `TEST_CHANNELS` is the channel to post debug messages about updates to.
+   - `SUBMISSION_CHANNEL` is the channel to check for scanlation staff's progress messages.

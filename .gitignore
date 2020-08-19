@@ -1,3 +1,5 @@
 /gcreds.json
 /data/bot_config.json
 /data/bot_config_real.json
+/data/gcreds.json
+/data/token.pickle

@@ -6,6 +6,7 @@ import discord, json, traceback
 import utilss.sheetUtils.parseMsgs as parse
 import utilss.sheetUtils.createSheet as sheet
 
+CONFIG= utils.loadJson(globals.CONFIG_FILE)
 
 class Client(discord.Client):
     def load(self, prefix="$"):
@@ -60,7 +61,7 @@ class Client(discord.Client):
 
 
 async def scanMessages(client, last=False):
-    channel = client.get_channel(425992635086405632)
+    channel = client.get_channel(int(CONFIG['SUBMISSION_CHANNEL']))
 
     log= None
     if last: log= utils.loadJson(globals.MSG_FILE)
