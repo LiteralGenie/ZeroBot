@@ -19,7 +19,7 @@ All progress data is logged to a Google Sheets page which can be further filtere
 
 ## Setup 
 1. Clone repo and install the listed modules in `requirements.txt`.
-2. Obtain a Google service account key and save as `./gcreds.json`.
+2. Obtain a Google service account key and save as `./data/gcreds.json`.
 3. See [below](#Config) for config file instructions 
    -  (Channel and admins can be later modified using commands on Discord)
    -  Also modify the google spreadsheet id. (The link / id might also be hard-coded somewhere, i forget.)
