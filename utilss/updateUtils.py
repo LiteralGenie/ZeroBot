@@ -1,8 +1,8 @@
 from utilss import utils, globals
 import requests, re, asyncio, json, copy, time
-
 from bs4 import BeautifulSoup as bs
 
+CONFIG= utils.loadJson(globals.CONFIG_FILE)
 
 def parseUpdateDiv(dv):
     ret= {
@@ -30,7 +30,7 @@ def parseUpdateDiv(dv):
     # print(ret['sName'], ret['sId'], ret['sLink'], ret['chNum'], ret["chId"], ret['chLink'])
     return ret
 
-def getUpdates(l="https://zeroscans.com/latest"):
+def getUpdates(l=CONFIG['UPDATE_LINK']):
     updateList= []
     html= requests.get(l, verify=False).text
 
