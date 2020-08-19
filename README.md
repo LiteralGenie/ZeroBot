@@ -22,7 +22,6 @@ All progress data is logged to a Google Sheets page which can be further filtere
 2. Obtain a Google service account key and save as `./data/gcreds.json`.
 3. See [below](#Config) for config file instructions 
    -  (Channel and admins can be later modified using commands on Discord)
-   -  Also modify the google spreadsheet id. (The link / id might also be hard-coded somewhere, i forget.)
 4. Run `main.py` and see `!help` for the command list.
 
 ## TODO
@@ -70,3 +69,4 @@ Where:
    - `SIMUL_UPDATE_INTERVAL` is the interval for which updates for a single series are merged into a single Discord message (from first update).
    - `TEST_CHANNELS` is the channel to post debug messages about updates to.
    - `SUBMISSION_CHANNEL` is the channel to check for scanlation staff's progress messages.
+   - `SHEET_ID` Google sheets id --- `https://docs.google.com/spreadsheets/d/{SHEET_ID}`
