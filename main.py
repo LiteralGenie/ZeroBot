@@ -1,5 +1,5 @@
-from utils import discordUtils, utils, updateUtils, globals
-import asyncio, discord, time, copy
+from utilss import discordUtils, utils, updateUtils, globals
+import asyncio, discord, time, copy, traceback, json
 
 # SETUP ----------------------
 client= None
@@ -20,6 +20,18 @@ async def updateHandler(update):
     #updateMessage= updateUtils.getUpdateMessage(update=update, mentionDict=MENTIONS)
     updateEmbed, mentions= updateUtils.getUpdateEmbed(update=update, mentionDict=MENTIONS)
 
+
+
+    for chid in CONFIG['TEST_CHANNELS']:
+        test= client.get_channel(int(chid))
+        if test:
+            ss= f'Updating in {CONFIG["DISCORD_DELAY"]} seconds:\n```{json.dumps(update, indent=2)}```'
+            print(ss)
+            try: await test.send(ss)
+            except discord.errors.Forbidden: pass
+
+    await asyncio.sleep(delay=CONFIG['DISCORD_DELAY'])
+
     for chid in CONFIG['UPDATE_CHANNELS']:
         swapped= []
         updateChannel= client.get_channel(int(chid))
@@ -27,9 +39,10 @@ async def updateHandler(update):
             for roleId in mentions:
                 role= updateChannel.guild.get_role(int(roleId))
                 if role: #and not role.mentionable:
-                    await role.edit(mentionable=True)
+                    #await role.edit(mentionable=True)
                     swapped.append(role)
-            mentionString= f"<@&{'> <@&'.join(mentions)}>"
+            time.sleep(5)
+            mentionString= f"<@&{'> <@&'.join(mentions)}> **{updateEmbed['title']}**"
         else: mentionString= ""
 
         try:
@@ -68,13 +81,14 @@ async def updateHandler(update):
         except Exception as e:
             print(e)
 
+        time.sleep(5)
         for role in swapped:
-            await role.edit(mentionable=False)
+            pass#await role.edit(mentionable=False)
 
 async def checkUpdates():
     while True:
         reload()
-        await updateUtils.handleUpdates(handler=updateHandler, cache=CACHE, cacheFile=globals.CACHE_FILE, delay=CONFIG['DISCORD_DELAY'])
+        await updateUtils.handleUpdates(handler=updateHandler, cache=CACHE, cacheFile=globals.CACHE_FILE)
         await asyncio.sleep(CONFIG['UPDATE_DELAY'])
 
 async def runBot():
@@ -93,4 +107,9 @@ async def main():
 	)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    while True:
+        try: asyncio.run(main())
+        except KeyboardInterrupt: break
+        except Exception as e:
+            print("ERROR", e)
+            traceback.print_exc()
