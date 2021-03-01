@@ -93,7 +93,7 @@ async def checkUpdates():
 
 async def runBot():
     global client
-    client= discordUtils.Client()
+    client= discordUtils.Client(intents=discord.Intents.all())
     client.load(prefix=CONFIG['PREFIX'])
     await client.start(CONFIG['DISCORD_KEY'])
 
