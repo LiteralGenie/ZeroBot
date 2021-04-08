@@ -51,6 +51,7 @@ class Client(discord.Client):
             elif m.startswith("listr"):
                 await listRoles(*args)
 
+        # todo: hardcode
         if isAdmin or message.guild.id == 425423910759170049:
             if m.startswith("stat"):
                 print(message.author.name, message.content)

@@ -53,6 +53,7 @@ cmdList= {
 }
 
 async def listRoles(message, client):
+	# todo: no hardcode
 	roles= await client.get_guild(401178214258704384).fetch_roles()
 	ret= ""
 	for r in roles:
@@ -120,7 +121,7 @@ async def setDelay(message, client):
 	utils.dumpJson(config, globals.CONFIG_FILE)
 
 	await message.channel.send(f"Updates will be checked every `{val}` seconds (from `{oldDelay}`).")
-	
+
 async def setDiscordDelay(message, client):
 	split= message.content.split()
 	correctUsageString= getUseString("setdelay", client)
@@ -292,7 +293,7 @@ async def settings(message, client):
 		val= f"{name} ({uid})"
 		users.append(val)
 	config['ADMINS']= users
-	
+
 	text= utils.breakMessage(json.dumps(config, indent=2), codeblock=True)
 
 	for t in text:
@@ -338,7 +339,7 @@ async def stats(message, client):
 		catMatch= [x for x in tallies['all'] if x.lower() == spl[0] and spl[0] != 'all']
 		if catMatch:
 			catMatch= catMatch[0]
-			
+
 			flag= False
 			if 'all' in spl: flag=True
 
@@ -347,7 +348,7 @@ async def stats(message, client):
 
 			s= f'```py\n\n@ {catMatch.upper()} Stats\n\n{utils.pprint(catStats, headers=header)}\n```'
 			if not flag: s+= "\n(Include `all` at the end to sort by all-time counts.)"
-			
+
 			s= utils.breakMessage(s, codeblock=True, lang="py")
 
 			for msg in s: await message.channel.send(msg)
@@ -360,12 +361,12 @@ async def stats(message, client):
 			try:
 				username= int(split[1].replace("<@!","").replace(">",""))
 				username= client.get_user(username).name
-			except ValueError:				
+			except ValueError:
 				for x in data['members']:
 					if all([y.lower() in data['members'][x].lower() for y in spl]):
 						username= data['members'][x]
 						break
-			
+
 			if not username: return await message.channel.send(f"Error. `{split[1]}` is not a known user.")
 
 			uStats= statUtils.getUserStats(username, data, tallies)
