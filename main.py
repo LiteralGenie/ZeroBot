@@ -103,7 +103,7 @@ async def runBot():
 async def main():
     await asyncio.gather(
         runBot(),
-        checkUpdates()
+        # checkUpdates()
 	)
 
 if __name__ == "__main__":
