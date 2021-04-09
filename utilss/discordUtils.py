@@ -23,7 +23,7 @@ class Client(discord.Client):
         m = message.content.lower().replace(self.prefix, "", 1)
         args = [message, self]
 
-        isAdmin= str(message.author.id) in utils.loadJson(globals.CONFIG_FILE)['ADMINS']
+        isAdmin= str(message.author.id) in CONFIG['ADMINS']
         if isAdmin:
             print(message.author.name, message.content)
             if m.startswith("help"):
@@ -51,8 +51,8 @@ class Client(discord.Client):
             elif m.startswith("listr"):
                 await listRoles(*args)
 
-        # todo: hardcode
-        if isAdmin or message.guild.id == 425423910759170049:
+        # todo: no hardcode
+        if isAdmin or message.guild.id == CONFIG['STAFF_SERVER']:
             if m.startswith("stat"):
                 print(message.author.name, message.content)
                 await scanMessages(self, last=True)
@@ -76,14 +76,19 @@ async def scanMessages(client, last=False):
         print("resetting log")
         log= {"log": [], "members": {}, "last_parsed": ""}
 
+    has_new= False
     async for msg in channel.history(limit=None, oldest_first=True, after=last):
         print("Scanning", msg.content)
         log['log'].append(sheetUtils.msgToDict(msg))
         log['members'][msg.author.id] = msg.author.name
         log['last_parsed'] = msg.id
 
-    with open("data/msg_log.json", "w+") as file:
-        json.dump(log, file, indent=2)
+        has_new= True
+
+    if has_new:
+        with open("data/msg_log.json", "w+") as file:
+            json.dump(log, file, indent=2)
+        sheet.make()
 
     parse.parse()
 
@@ -91,8 +96,6 @@ async def scanMessages(client, last=False):
 
 
 async def updateSheet(client, message):
-
-
     try:
         async with message.channel.typing():
             await message.channel.send("Scanning messages...")
