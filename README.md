@@ -1,3 +1,6 @@
+I ain't updating this anymore. This works better-ish: https://github.com/LiteralGenie/NotifyBot
+
+
 ## Description
 Discord bot to display updates from https://zeroscans.com/latest with series-specific pings. Contact `Literal Genie#2222` for concerns or whatever.
 
